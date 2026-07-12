@@ -310,6 +310,17 @@
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
+        #calendarBtn {
+            background: linear-gradient(135deg, #5b8def, #3b6fd4);
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        #calendarBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
         .success-message {
             color: white;
             font-size: 1.8rem;
@@ -454,10 +465,12 @@
                         <option value="🥡 Chińska">🥡 Chińska</option>
                         <option value="🍛 Indyjska">🍛 Indyjska</option>
                         <option value="🥖 Francuska">🥖 Francuska</option>
+                        <option value="🥘 Hiszpańska">🥘 Hiszpańska</option>
                         <option value="🍖 Turecka">🍖 Turecka</option>
                         <option value="🌯 Grecka">🌯 Grecka</option>
                         <option value="🥩 Argentyńska">🥩 Argentyńska</option>
                         <option value="🍜 Tajska">🍜 Tajska</option>
+                        <option value="🥢 Wietnamska">🥢 Wietnamska</option>
                         <option value="🥟 Koreańska">🥟 Koreańska</option>
                         <option value="🍲 Polska">🍲 Polska</option>
                         <option value="🍔 Hamburgery">🍔 Hamburgery</option>
@@ -479,6 +492,8 @@
             <div class="success-message">🎉 Widzimy się! 🎉</div>
             
             <div class="date-time-display" id="dateTimeDisplay"></div>
+            
+            <button id="calendarBtn" onclick="addToCalendar()">📅 Dodaj do kalendarza</button>
             
             <div class="image-container">
                 <img src="kot_kiss.gif" alt="" id="valentineImage" 
@@ -505,6 +520,7 @@
 
         let currentCalendarDate = new Date();
         let selectedDate = null;
+        let confirmedEvent = null;
 
         function moveButton() {
             const btn = document.getElementById('noBtn');
@@ -601,10 +617,10 @@
             
             timeInput.value = '';
             timeInput.min = `${minHour}:00`;
-            timeInput.max = '23:00';
+            timeInput.max = '21:30';
             
             document.getElementById('timeInfo').textContent = 
-                `📢 Tego dnia dostępne godziny: ${minHour}:00-23:00`;
+                `📢 Tego dnia dostępne godziny: ${minHour}:00-21:00`;
         }
 
         function showForm() {
@@ -654,11 +670,59 @@
                 ${cuisineSelect}
             `;
 
+            confirmedEvent = { date: dateInput, time: timeInput, cuisine: cuisineSelect };
+
             document.getElementById('dateTimeDisplay').innerHTML = displayText;
             
             document.getElementById('formScreen').style.display = 'none';
             document.getElementById('successScreen').style.display = 'block';
             createFloatingHearts();
+        }
+
+        function addToCalendar() {
+            if (!confirmedEvent) return;
+
+            const { date, time, cuisine } = confirmedEvent;
+            const pad = n => String(n).padStart(2, '0');
+
+            // Start wydarzenia
+            const start = date.replace(/-/g, '') + 'T' + time.replace(':', '') + '00';
+
+            // Koniec = start + 2 godziny
+            const endDate = new Date(date + 'T' + time + ':00');
+            endDate.setHours(endDate.getHours() + 2);
+            const end = endDate.getFullYear() + pad(endDate.getMonth() + 1) + pad(endDate.getDate()) +
+                        'T' + pad(endDate.getHours()) + pad(endDate.getMinutes()) + '00';
+
+            const now = new Date();
+            const dtstamp = now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) +
+                            'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + pad(now.getUTCSeconds()) + 'Z';
+
+            const icsContent = [
+                'BEGIN:VCALENDAR',
+                'VERSION:2.0',
+                'PRODID:-//Randka//PL',
+                'CALSCALE:GREGORIAN',
+                'BEGIN:VEVENT',
+                'UID:randka-' + Date.now() + '@izi',
+                'DTSTAMP:' + dtstamp,
+                'DTSTART:' + start,
+                'DTEND:' + end,
+                'SUMMARY:💕 Randka!',
+                'DESCRIPTION:' + cuisine,
+                'END:VEVENT',
+                'END:VCALENDAR'
+            ].join('\r\n');
+
+            const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'randka.ics';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
 
         function createFloatingHearts() {
