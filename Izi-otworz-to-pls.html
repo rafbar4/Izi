@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zaproszenie na randkę 💕</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 90%;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            overflow-y: auto;
+        }
+
+        .hearts {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            animation: heartbeat 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+        }
+
+        h1 {
+            font-family: 'Pacifico', cursive;
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .buttons-container {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1rem;
+            position: relative;
+            height: 150px;
+            width: 100%;
+            align-items: center;
+        }
+
+        button {
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 0.8rem 2.5rem;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        #yesBtn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+            color: white;
+            z-index: 5;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #noBtn {
+            background: linear-gradient(135deg, #a8a8a8, #7a7a7a);
+            color: white;
+            position: absolute;
+            transition: all 0.1s ease;
+            z-index: 15;
+        }
+
+        .form-screen {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        .success-screen {
+            display: none;
+            animation: fadeIn 1s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin: 1.5rem 0;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            color: white;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            font-size: 1rem;
+            font-family: 'Quicksand', sans-serif;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            box-sizing: border-box;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .form-group select option {
+            background: white;
+            color: #333;
+            padding: 0.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .button-group button {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        #confirmBtn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+        }
+
+        #confirmBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        #backBtn {
+            background: linear-gradient(135deg, #FF9800, #f57c00);
+            color: white;
+        }
+
+        #backBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .success-message {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin: 1.5rem 0;
+            white-space: normal;
+        }
+
+        .date-time-display {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin: 1.5rem 0;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .image-container {
+            margin: 1rem auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            max-height: 35vh;
+            max-width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .image-container img {
+            width: auto;
+            height: auto;
+            max-width: 100%;
+            max-height: 35vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        .floating-hearts {
+            position: fixed;
+            font-size: 2rem;
+            animation: floatUp 4s ease-in infinite;
+            pointer-events: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .footer {
+            color: white;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.5rem;
+                width: 95%;
+            }
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+            }
+            .hearts {
+                font-size: 2.5rem;
+            }
+            .success-message {
+                font-size: 1.1rem;
+            }
+            button {
+                padding: 0.8rem 1.5rem;
+                font-size: 1.1rem;
+            }
+            .buttons-container {
+                gap: 1rem;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            .button-group button {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Ekran zaproszenia -->
+        <div id="questionScreen">
+            <div class="hearts">❤️ 💕 ❤️</div>
+            <h1>Izi, czy pójdziesz ze mną na randkę?</h1>
+            
+            <div class="image-container">
+                <img src="shrek_kot.gif" alt="" 
+                     onerror="this.style.display='none'; document.getElementById('imageErrorQuestion').style.display='block';">
+                <div id="imageErrorQuestion" style="display: none; padding: 2rem; color: white;">
+                    <p>💡 Dodaj swoje zdjęcie o nazwie 'shrek_kot.gif' w tym samym folderze!</p>
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button id="yesBtn" onclick="showForm()">💖 TAK 💖</button>
+                <button id="noBtn" onmouseover="moveButton()" onclick="moveButton()" ontouchstart="moveButton()">😢 Nie</button>
+            </div>
+        </div>
+
+        <!-- Ekran wyboru daty i godziny -->
+        <div id="formScreen" class="form-screen">
+            <div class="hearts">❤️ 💕 ❤️</div>
+            <h1>Świetnie! Kiedy?</h1>
+            
+            <div class="form-container">
+                <div class="form-group">
+                    <label for="dateInput">📅 Wybierz datę:</label>
+                    <input type="date" id="dateInput" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="timeInput">🕐 Wybierz godzinę:</label>
+                    <input type="time" id="timeInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cuisineSelect">🍽️ Jaka kuchnia Ci się podoba?</label>
+                    <select id="cuisineSelect" required>
+                        <option value="">-- Wybierz kuchnię --</option>
+                        <option value="🍝 Włoska">🍝 Włoska</option>
+                        <option value="🍣 Japońska">🍣 Japońska</option>
+                        <option value="🌮 Meksykańska">🌮 Meksykańska</option>
+                        <option value="🥡 Chińska">🥡 Chińska</option>
+                        <option value="🍛 Indyjska">🍛 Indyjska</option>
+                        <option value="🥖 Francuska">🥖 Francuska</option>
+                        <option value="🍖 Turecka">🍖 Turecka</option>
+                        <option value="🌯 Grecka">🌯 Grecka</option>
+                        <option value="🥩 Argentyńska">🥩 Argentyńska</option>
+                        <option value="🍜 Tajska">🍜 Tajska</option>
+                        <option value="🥟 Koreańska">🥟 Koreańska</option>
+                        <option value="🍲 Polska">🍲 Polska</option>
+                        <option value="🍔 Hamburgery">🍔 Hamburgery</option>
+                        <option value="🥗 Wegetariańska">🥗 Wegetariańska</option>
+                        <option value="🍰 Kawiarnia">🍰 Kawiarnia</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="button-group">
+                <button id="backBtn" onclick="backToQuestion()">⬅️ Wróć</button>
+                <button id="confirmBtn" onclick="showSuccess()">✅ Potwierdź</button>
+            </div>
+        </div>
+
+        <!-- Ekran sukcesu -->
+        <div id="successScreen" class="success-screen">
+            <div class="hearts">💝 🫶🏽 🌹</div>
+            <div class="success-message">🎉 Świetnie! Do zobaczenia! 🎉</div>
+            
+            <div class="date-time-display" id="dateTimeDisplay"></div>
+            
+            <div class="image-container">
+                <img src="kot_kiss.gif" alt="" id="valentineImage" 
+                     onerror="this.style.display='none'; document.getElementById('imageError').style.display='block';">
+                <div id="imageError" style="display: none; padding: 2rem; color: white;">
+                    <p>💡 Dodaj swoje zdjęcie o nazwie 'kot_kiss.gif' w tym samym folderze!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">🏹</div>
+    </div>
+
+    <script>
+        function moveButton() {
+            const btn = document.getElementById('noBtn');
+            const container = document.querySelector('.buttons-container');
+            
+            const maxX = container.offsetWidth - btn.offsetWidth - 20;
+            const maxY = container.offsetHeight - btn.offsetHeight - 20;
+            
+            const randomX = Math.random() * maxX;
+            const randomY = Math.random() * maxY;
+            
+            btn.style.left = randomX + 'px';
+            btn.style.top = randomY + 'px';
+        }
+
+        function showForm() {
+            document.getElementById('questionScreen').style.display = 'none';
+            document.getElementById('formScreen').style.display = 'block';
+            
+            // Ustaw minimalną datę na dzisiaj
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('dateInput').min = today;
+        }
+
+        function backToQuestion() {
+            document.getElementById('formScreen').style.display = 'none';
+            document.getElementById('questionScreen').style.display = 'block';
+        }
+
+        function showSuccess() {
+            const dateInput = document.getElementById('dateInput').value;
+            const timeInput = document.getElementById('timeInput').value;
+            const cuisineSelect = document.getElementById('cuisineSelect').value;
+
+            if (!dateInput || !timeInput || !cuisineSelect) {
+                alert('⚠️ Uzupełnij wszystkie pola!');
+                return;
+            }
+
+            // Konwersja daty na polski format
+            const date = new Date(dateInput);
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const polishDate = date.toLocaleDateString('pl-PL', options);
+
+            const displayText = `
+                📅 ${polishDate}<br>
+                🕐 ${timeInput}<br>
+                ${cuisineSelect} kuchnia
+            `;
+
+            document.getElementById('dateTimeDisplay').innerHTML = displayText;
+            
+            document.getElementById('formScreen').style.display = 'none';
+            document.getElementById('successScreen').style.display = 'block';
+            createFloatingHearts();
+        }
+
+        function createFloatingHearts() {
+            const hearts = ['❤️', '💕', '💖', '💗', '💝'];
+            
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-hearts';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.animationDelay = Math.random() * 2 + 's';
+                    document.body.appendChild(heart);
+                    
+                    setTimeout(() => heart.remove(), 4000);
+                }, i * 200);
+            }
+        }
+
+        // Ustawienie początkowej pozycji przycisku "Nie" w tym samym miejscu co "Tak"
+        window.addEventListener('load', () => {
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            const container = document.querySelector('.buttons-container');
+            
+            const yesRect = yesBtn.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            noBtn.style.left = (yesRect.left - containerRect.left) + 'px';
+            noBtn.style.top = (yesRect.top - containerRect.top) + 'px';
+        });
+    </script>
+</body>
+</html>
