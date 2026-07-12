@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Zaproszenie na randkę 💕</title>
+    <title>Zaproszenie</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -15,12 +15,12 @@
         body {
             font-family: 'Quicksand', sans-serif;
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         .container {
@@ -37,6 +37,7 @@
             flex-direction: column;
             justify-content: center;
             overflow-y: auto;
+            margin: 1rem 0;
         }
 
         .hearts {
@@ -144,27 +145,7 @@
             font-size: 1rem;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 15px;
-            font-size: 1rem;
-            font-family: 'Quicksand', sans-serif;
-            background: rgba(255, 255, 255, 0.9);
-            color: #333;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: white;
-            background: rgba(255, 255, 255, 1);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-
+        .form-group input,
         .form-group select {
             width: 100%;
             padding: 0.8rem;
@@ -176,7 +157,18 @@
             color: #333;
             box-sizing: border-box;
             transition: all 0.3s ease;
+        }
+
+        .form-group select {
             cursor: pointer;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: white;
+            background: rgba(255, 255, 255, 1);
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
         }
 
         .form-group select option {
@@ -194,6 +186,10 @@
         }
 
         #calendar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 15px;
+            margin-top: 0.5rem;
             user-select: none;
         }
 
@@ -213,6 +209,7 @@
             font-size: 0.9rem;
             cursor: pointer;
             border-radius: 8px;
+            box-shadow: none;
         }
 
         .calendar-header button:hover {
@@ -246,27 +243,27 @@
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            cursor: pointer;
             font-size: 0.9rem;
             font-weight: 500;
             border: 2px solid transparent;
             transition: all 0.2s ease;
-            background: rgba(255, 255, 255, 0.1);
         }
 
         .calendar-day.empty {
-            cursor: default;
             background: transparent;
             border: none;
+            cursor: default;
+            pointer-events: none;
         }
 
         .calendar-day.available {
+            background: rgba(255, 255, 255, 0.1);
             color: white;
             cursor: pointer;
         }
 
         .calendar-day.available:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.25);
             transform: scale(1.05);
         }
 
@@ -275,6 +272,7 @@
             color: white;
             border-color: white;
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            cursor: pointer;
         }
 
         .button-group {
@@ -436,17 +434,18 @@
             <div class="form-container">
                 <div class="form-group">
                     <label>📅 Wybierz datę:</label>
-                    <input type="date" id="dateInput" required style="display: none;">
-                    <div id="calendar" style="background: rgba(255,255,255,0.1); padding: 1rem; border-radius: 15px; margin-top: 0.5rem;"></div>
+                    <input type="hidden" id="dateInput">
+                    <div id="calendar"></div>
                 </div>
                 
                 <div class="form-group">
                     <label for="timeInput">🕐 Wybierz godzinę:</label>
                     <input type="time" id="timeInput" required>
+                    <div id="timeInfo"></div>
                 </div>
 
                 <div class="form-group">
-                    <label for="cuisineSelect">🍽️ Jaka kuchnia Ci się podoba?</label>
+                    <label for="cuisineSelect">🍽️ Na co masz ochotę?</label>
                     <select id="cuisineSelect" required>
                         <option value="">-- Wybierz kuchnię --</option>
                         <option value="🍝 Włoska">🍝 Włoska</option>
@@ -469,7 +468,7 @@
             </div>
             
             <div class="button-group">
-                <button id="backBtn" onclick="backToQuestion()">⬅️ Wróć</button>
+                <button id="backBtn" onclick="backToQuestion()">⬅️ Wróć (nawet nie próbuj)</button>
                 <button id="confirmBtn" onclick="showSuccess()">✅ Potwierdź</button>
             </div>
         </div>
@@ -477,7 +476,7 @@
         <!-- Ekran sukcesu -->
         <div id="successScreen" class="success-screen">
             <div class="hearts">💝 🫶🏽 🌹</div>
-            <div class="success-message">🎉 Świetnie! Do zobaczenia! 🎉</div>
+            <div class="success-message">🎉 Let's go! 🎉</div>
             
             <div class="date-time-display" id="dateTimeDisplay"></div>
             
@@ -494,14 +493,14 @@
     </div>
 
     <script>
-        // Daty, które są całkowicie niedostępne
+        // Daty, które są całkowicie niedostępne (ROK 2026!)
         const unavailableDates = [
-            '2025-07-14',
-            '2025-07-15',
-            '2025-07-23',
-            '2025-07-24',
-            '2025-07-25',
-            '2025-07-26'
+            '2026-07-14',
+            '2026-07-15',
+            '2026-07-23',
+            '2026-07-24',
+            '2026-07-25',
+            '2026-07-26'
         ];
 
         let currentCalendarDate = new Date();
@@ -525,75 +524,52 @@
             return unavailableDates.includes(dateStr);
         }
 
-        function getAvailableHours(dateStr) {
-            const date = new Date(dateStr + 'T00:00:00');
-            const dayOfWeek = date.getDay();
-            
-            if (dayOfWeek === 0 || dayOfWeek === 4) {
-                // Niedziela lub czwartek - od 21:00
-                return Array.from({length: 3}, (_, i) => `${21 + i}:00`);
-            } else {
-                // Pozostałe dni - od 16:00
-                return Array.from({length: 8}, (_, i) => `${16 + i}:00`);
-            }
+        function getMinHour(dateStr) {
+            const dayOfWeek = new Date(dateStr + 'T00:00:00').getDay();
+            // 0 = niedziela, 4 = czwartek
+            return (dayOfWeek === 0 || dayOfWeek === 4) ? 21 : 16;
         }
 
         function generateCalendar(year, month) {
             const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startingDayOfWeek = firstDay.getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const startingDayOfWeek = firstDay.getDay(); // 0 = niedziela
 
             let html = `
                 <div class="calendar-header">
-                    <button onclick="previousMonth()">◀</button>
+                    <button type="button" onclick="previousMonth()">◀</button>
                     <span style="font-size: 1.1rem; font-weight: 600;">
-                        ${new Date(year, month, 1).toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })}
+                        ${firstDay.toLocaleDateString('pl-PL', { month: 'long', year: 'numeric' })}
                     </span>
-                    <button onclick="nextMonth()">▶</button>
+                    <button type="button" onclick="nextMonth()">▶</button>
                 </div>
                 <div class="calendar-weekdays">
-                    <div>Pn</div>
-                    <div>Wt</div>
-                    <div>Śr</div>
-                    <div>Cz</div>
-                    <div>Pt</div>
-                    <div>Sb</div>
-                    <div>Nd</div>
+                    <div>Pn</div><div>Wt</div><div>Śr</div><div>Cz</div><div>Pt</div><div>Sb</div><div>Nd</div>
                 </div>
                 <div class="calendar-days">
             `;
 
-            // Puste dni na początku
-            for (let i = 0; i < (startingDayOfWeek === 0 ? 6 : startingDayOfWeek - 1); i++) {
+            // Puste pola na początku (tydzień zaczyna się od poniedziałku)
+            const leadingEmpty = (startingDayOfWeek === 0) ? 6 : startingDayOfWeek - 1;
+            for (let i = 0; i < leadingEmpty; i++) {
                 html += '<div class="calendar-day empty"></div>';
             }
 
-            // Dni miesiąca
+            const today = new Date();
+            const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+
             for (let day = 1; day <= daysInMonth; day++) {
                 const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const today = new Date();
                 const currentDate = new Date(year, month, day);
-                
-                let className = 'calendar-day';
-                let isAvailable = true;
 
-                if (currentDate < new Date(today.getFullYear(), today.getMonth(), today.getDate())) {
-                    className += ' empty';
-                    isAvailable = false;
-                } else if (isDateUnavailable(dateStr)) {
-                    className += ' empty';
-                    isAvailable = false;
-                } else {
-                    className += ' available';
+                // Dni przeszłe ORAZ niedostępne = puste pole bez numeru
+                if (currentDate < todayMidnight || isDateUnavailable(dateStr)) {
+                    html += '<div class="calendar-day empty"></div>';
+                    continue;
                 }
 
-                if (selectedDate === dateStr) {
-                    className = className.replace('available', 'selected');
-                }
-
-                const onClickHandler = isAvailable ? `onclick="selectDate('${dateStr}')"` : '';
-                html += `<div class="${className}" ${onClickHandler}>${day}</div>`;
+                const className = (selectedDate === dateStr) ? 'calendar-day selected' : 'calendar-day available';
+                html += `<div class="${className}" onclick="selectDate('${dateStr}')">${day}</div>`;
             }
 
             html += '</div>';
@@ -621,30 +597,14 @@
 
         function updateAvailableHours(dateStr) {
             const timeInput = document.getElementById('timeInput');
-            const availableHours = getAvailableHours(dateStr);
+            const minHour = getMinHour(dateStr);
             
             timeInput.value = '';
-            const minTime = availableHours[0];
-            const maxTime = availableHours[availableHours.length - 1];
+            timeInput.min = `${minHour}:00`;
+            timeInput.max = '23:00';
             
-            timeInput.min = minTime;
-            timeInput.max = maxTime;
-            
-            let infoText = '';
-            const dayOfWeek = new Date(dateStr + 'T00:00:00').getDay();
-            if (dayOfWeek === 0 || dayOfWeek === 4) {
-                infoText = '📢 Tego dnia dostępne godziny: 21:00-23:00';
-            } else {
-                infoText = '📢 Tego dnia dostępne godziny: 16:00-23:00';
-            }
-            
-            let infoDiv = document.getElementById('timeInfo');
-            if (!infoDiv) {
-                infoDiv = document.createElement('div');
-                infoDiv.id = 'timeInfo';
-                timeInput.parentNode.appendChild(infoDiv);
-            }
-            infoDiv.textContent = infoText;
+            document.getElementById('timeInfo').textContent = 
+                `📢 Tego dnia dostępne godziny: ${minHour}:00-23:00`;
         }
 
         function showForm() {
@@ -675,27 +635,23 @@
                 return;
             }
 
-            const availableHours = getAvailableHours(dateInput);
-            const hour = parseInt(timeInput.split(':')[0]);
-            const isTimeAvailable = availableHours.some(h => parseInt(h.split(':')[0]) === hour);
+            // Walidacja godzin
+            const minHour = getMinHour(dateInput);
+            const [hour, minute] = timeInput.split(':').map(Number);
             
-            if (!isTimeAvailable) {
-                const dayOfWeek = new Date(dateInput + 'T00:00:00').getDay();
-                const availableMsg = (dayOfWeek === 0 || dayOfWeek === 4) 
-                    ? '21:00-23:00' 
-                    : '16:00-23:00';
-                alert(`⚠️ Ta godzina jest niedostępna. Dostępne godziny: ${availableMsg}`);
+            if (hour < minHour || hour > 23 || (hour === 23 && minute > 0)) {
+                alert(`⚠️ Ta godzina jest niedostępna. Dostępne godziny: ${minHour}:00-23:00`);
                 return;
             }
 
-            const date = new Date(dateInput);
+            const date = new Date(dateInput + 'T00:00:00');
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const polishDate = date.toLocaleDateString('pl-PL', options);
 
             const displayText = `
                 📅 ${polishDate}<br>
                 🕐 ${timeInput}<br>
-                ${cuisineSelect} kuchnia
+                ${cuisineSelect}
             `;
 
             document.getElementById('dateTimeDisplay').innerHTML = displayText;
