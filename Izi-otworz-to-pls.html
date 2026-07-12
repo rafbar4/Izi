@@ -185,6 +185,14 @@
             padding: 0.5rem;
         }
 
+        #timeInfo {
+            color: white;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+
         .button-group {
             display: flex;
             gap: 1rem;
@@ -415,6 +423,34 @@
             btn.style.top = randomY + 'px';
         }
 
+        // Daty, które są całkowicie niedostępne
+        const unavailableDates = [
+            '2025-07-14',
+            '2025-07-15',
+            '2025-07-23',
+            '2025-07-24',
+            '2025-07-25',
+            '2025-07-26'
+        ];
+
+        function isDateUnavailable(dateStr) {
+            return unavailableDates.includes(dateStr);
+        }
+
+        function getAvailableHours(dateStr) {
+            // 0 = niedziela, 1 = poniedziałek, ..., 4 = czwartek
+            const date = new Date(dateStr + 'T00:00:00');
+            const dayOfWeek = date.getDay();
+            
+            if (dayOfWeek === 0 || dayOfWeek === 4) {
+                // Niedziela lub czwartek - od 21:00
+                return Array.from({length: 3}, (_, i) => `${21 + i}:00`);
+            } else {
+                // Pozostałe dni - od 16:00
+                return Array.from({length: 8}, (_, i) => `${16 + i}:00`);
+            }
+        }
+
         function showForm() {
             document.getElementById('questionScreen').style.display = 'none';
             document.getElementById('formScreen').style.display = 'block';
@@ -422,6 +458,50 @@
             // Ustaw minimalną datę na dzisiaj
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('dateInput').min = today;
+            
+            // Dodaj walidację do pola daty
+            const dateInput = document.getElementById('dateInput');
+            dateInput.addEventListener('change', function() {
+                const selectedDate = this.value;
+                if (isDateUnavailable(selectedDate)) {
+                    alert('⚠️ Ta data jest niedostępna. Wybierz inną datę.');
+                    this.value = '';
+                } else {
+                    updateAvailableHours(selectedDate);
+                }
+            });
+        }
+
+        function updateAvailableHours(dateStr) {
+            const timeInput = document.getElementById('timeInput');
+            const availableHours = getAvailableHours(dateStr);
+            
+            // Wyczyść input i ustaw min/max
+            timeInput.value = '';
+            const minTime = availableHours[0];
+            const maxTime = availableHours[availableHours.length - 1];
+            
+            timeInput.min = minTime;
+            timeInput.max = maxTime;
+            
+            // Pokaż informacje o dostępnych godzinach
+            const dayOfWeek = new Date(dateStr + 'T00:00:00').getDay();
+            const dayName = dayOfWeek === 0 ? 'niedziela' : dayOfWeek === 4 ? 'czwartek' : 'zwykły dzień';
+            
+            let infoText = '';
+            if (dayOfWeek === 0 || dayOfWeek === 4) {
+                infoText = '📢 Tego dnia dostępne godziny: 21:00-23:00';
+            } else {
+                infoText = '📢 Tego dnia dostępne godziny: 16:00-23:00';
+            }
+            
+            if (!document.getElementById('timeInfo')) {
+                const infoDiv = document.createElement('div');
+                infoDiv.id = 'timeInfo';
+                infoDiv.style.cssText = 'color: white; font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.9;';
+                timeInput.parentNode.appendChild(infoDiv);
+            }
+            document.getElementById('timeInfo').textContent = infoText;
         }
 
         function backToQuestion() {
@@ -436,6 +516,26 @@
 
             if (!dateInput || !timeInput || !cuisineSelect) {
                 alert('⚠️ Uzupełnij wszystkie pola!');
+                return;
+            }
+
+            // Walidacja niedostępnych dat
+            if (isDateUnavailable(dateInput)) {
+                alert('⚠️ Ta data jest niedostępna!');
+                return;
+            }
+
+            // Walidacja dostępnych godzin
+            const availableHours = getAvailableHours(dateInput);
+            const hour = parseInt(timeInput.split(':')[0]);
+            const isTimeAvailable = availableHours.some(h => parseInt(h.split(':')[0]) === hour);
+            
+            if (!isTimeAvailable) {
+                const dayOfWeek = new Date(dateInput + 'T00:00:00').getDay();
+                const availableMsg = (dayOfWeek === 0 || dayOfWeek === 4) 
+                    ? '21:00-23:00' 
+                    : '16:00-23:00';
+                alert(`⚠️ Ta godzina jest niedostępna. Dostępne godziny: ${availableMsg}`);
                 return;
             }
 
