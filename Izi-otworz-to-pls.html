@@ -270,13 +270,6 @@
             transform: scale(1.05);
         }
 
-        .calendar-day.unavailable {
-            background: #ff4444;
-            color: white;
-            cursor: not-allowed;
-            opacity: 0.7;
-        }
-
         .calendar-day.selected {
             background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
             color: white;
@@ -589,7 +582,7 @@
                     className += ' empty';
                     isAvailable = false;
                 } else if (isDateUnavailable(dateStr)) {
-                    className += ' unavailable';
+                    className += ' empty';
                     isAvailable = false;
                 } else {
                     className += ' available';
