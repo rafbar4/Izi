@@ -615,12 +615,19 @@
             const timeInput = document.getElementById('timeInput');
             const minHour = getMinHour(dateStr);
             
-            timeInput.value = '';
             timeInput.min = `${minHour}:00`;
-            timeInput.max = '21:30';
+            timeInput.max = '23:00';
+            
+            // Kasuj godzinę tylko jeśli przestała być dostępna dla nowej daty
+            if (timeInput.value) {
+                const h = parseInt(timeInput.value.split(':')[0], 10);
+                if (h < minHour || h > 23) {
+                    timeInput.value = '';
+                }
+            }
             
             document.getElementById('timeInfo').textContent = 
-                `📢 Tego dnia dostępne godziny: ${minHour}:00-21:00`;
+                `📢 Tego dnia dostępne godziny: ${minHour}:00-23:00`;
         }
 
         function showForm() {
@@ -639,7 +646,11 @@
         function showSuccess() {
             const dateInput = document.getElementById('dateInput').value;
             const timeInput = document.getElementById('timeInput').value;
-            const cuisineSelect = document.getElementById('cuisineSelect').value;
+            const cuisineEl = document.getElementById('cuisineSelect');
+            // Czytamy widoczny tekst opcji (odporne na brakujące atrybuty value)
+            const cuisineSelect = cuisineEl.selectedIndex > 0
+                ? cuisineEl.options[cuisineEl.selectedIndex].text.trim()
+                : '';
 
             if (!dateInput || !timeInput || !cuisineSelect) {
                 alert('⚠️ Uzupełnij wszystkie pola!');
